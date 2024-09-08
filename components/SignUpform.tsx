@@ -17,6 +17,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { SignUp } from "@/actions/Signup";
+import toast, { Toaster } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const SignUpformSchema = z.object({
   Username: z.string(),
@@ -32,6 +35,7 @@ interface SignupProps {
 export type SignUpFormType = z.infer<typeof SignUpformSchema>;
 
 const SignUpform: React.FC<SignupProps> = ({ changeVariant }) => {
+  const router = useRouter();
   const SignUpform = useForm<SignUpFormType>({
     resolver: zodResolver(SignUpformSchema),
     defaultValues: {
@@ -42,7 +46,21 @@ const SignUpform: React.FC<SignupProps> = ({ changeVariant }) => {
     },
   });
 
-  const SignUponSubmit = async () => {};
+  const SignUponSubmit = async (value: SignUpFormType) => {
+    try {
+      if (value.FirstPassword === value.SecondPassword) {
+        const result = await SignUp(value);
+        if (!result.success) {
+          toast.error(result.message);
+        }
+        toast.success(result.message);
+        router.push("/home");
+        // changeVariant();
+      }
+    } catch (error) {
+      toast.error("新規登録に失敗");
+    }
+  };
   return (
     <>
       <Form {...SignUpform}>
@@ -60,7 +78,7 @@ const SignUpform: React.FC<SignupProps> = ({ changeVariant }) => {
                   ユーザーネーム
                 </FormLabel>
                 <FormControl>
-                  <Input placeholder="ゆうと" {...field} />
+                  <Input placeholder="ゆうと" {...field} autoComplete="off" />
                 </FormControl>
 
                 <FormMessage />

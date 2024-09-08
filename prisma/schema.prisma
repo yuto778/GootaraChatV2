@@ -14,18 +14,32 @@ datasource db {
 }
 
 model User {
-  id         String       @id @default(uuid())
-  name       String
-  email      String       @unique
-  avatar     String?
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  messages   Message[]
-  reactions  Reaction[]
-  readStatus ReadStatus[]
+  id              String            @id @default(uuid())
+  name            String
+  email           String            @unique
+  avatar          String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  messages        Message[]
+  reactions       Reaction[]
+  readStatus      ReadStatus[]
+  templateMessage TemplateMessage[]
+  friendsAsUser   Friends[]         @relation("UserFriends")
+  friendsAsFriend Friends[]         @relation("FriendUser")
 }
 
-model Room {
+model Friends {
+  id       String   @id @default(uuid())
+  userId   String
+  friendId String
+  request  Boolean?
+  user     User     @relation("UserFriends", fields: [userId], references: [id])
+  friend   User     @relation("FriendUser", fields: [friendId], references: [id])
+
+  @@unique([userId, friendId])
+}
+
+model ChatRoom {
   id        String    @id @default(uuid())
   name      String
   createdAt DateTime  @default(now())
@@ -34,14 +48,14 @@ model Room {
 }
 
 model Message {
-  id        String       @id @default(uuid())
+  id        String       @id @default(dbgenerated("uuid_generate_v4()"))
   content   String
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   userId    String
   roomId    String
   user      User         @relation(fields: [userId], references: [id])
-  room      Room         @relation(fields: [roomId], references: [id])
+  ChatRoom  ChatRoom     @relation(fields: [roomId], references: [id])
   readBy    ReadStatus[]
   reactions Reaction[]
 }
@@ -70,7 +84,9 @@ model Reaction {
 }
 
 model TemplateMessage {
-  id       String @id @default(uuid())
+  id       String  @id @default(uuid())
+  userId   String
   content  String
-  category String
+  category String?
+  user     User    @relation(fields: [userId], references: [id])
 }

@@ -17,6 +17,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import SignUpform from "./SignUpform";
+import toast, { Toaster } from "react-hot-toast";
+import { Login } from "@/actions/Login";
+import { useRouter } from "next/navigation";
 
 const LoginformSchema = z.object({
   Email: z.string().email(),
@@ -28,6 +31,7 @@ type VariantType = "Login" | "SignUp";
 export type LoginFormType = z.infer<typeof LoginformSchema>;
 
 const LoginForm = () => {
+  const router = useRouter();
   const [variant, setVariant] = useState<VariantType>("Login");
   const Loginform = useForm<LoginFormType>({
     resolver: zodResolver(LoginformSchema),
@@ -45,9 +49,28 @@ const LoginForm = () => {
     }
   };
 
-  const LoginonSubmit = async (values: LoginFormType) => {};
+  const LoginonSubmit = async (values: LoginFormType) => {
+    try {
+      const loginPromise = Login(values);
+
+      await toast.promise(loginPromise, {
+        loading: "少々お待ちください",
+        success: "ログインに成功",
+        error: "エラーが発生しました",
+      });
+
+      const result = await loginPromise;
+
+      if (!result.success) {
+        toast.error(result.message);
+      }
+
+      router.push("/home");
+    } catch (error) {}
+  };
   return (
     <>
+      <Toaster />
       {variant === "Login" && (
         <>
           <Form {...Loginform}>

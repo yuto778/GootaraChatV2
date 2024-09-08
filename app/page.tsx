@@ -1,23 +1,33 @@
-import Header from "@/components/Header";
-import LoginForm from "@/components/LoginForm";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { createClient } from "@/lib/supabase/server";
 import { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "ログイン",
+  title: "ぐーたらちゃっと",
+  description: "ぐーたらちゃっとの説明画面です",
 };
 
-export default function Home() {
+export default async function Home() {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    redirect("/home");
+  }
+
   return (
     <>
-      <div className="w-screen h-screen bg-gradient-to-bl from-yellow-200 to-black flex flex-col">
-        <Header />
-        <main className="flex items-center flex-1 justify-center ">
-          <div className=" bg-yellow-200/70 bg-opacity-80 rounded-lg w-3/4 h-auto flex flex-col items-center py-5 px-8 shadow-lg shadow-gray-400 space-y-5">
-            <LoginForm />
-          </div>
-        </main>
+      <div className="w-screen h-screen bg-gradient-to-bl from-yellow-200 to-black flex flex-col items-center justify-center">
+        <Button className="relative">
+          ログインへ
+          <Link href={"/login"} className="absolute inset-0"></Link>
+        </Button>
       </div>
     </>
   );

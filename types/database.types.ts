@@ -34,62 +34,125 @@ export type Database = {
   }
   public: {
     Tables: {
-      _prisma_migrations: {
+      ChatRoom: {
         Row: {
-          applied_steps_count: number
-          checksum: string
-          finished_at: string | null
+          createdAt: string | null
+          icon: string | null
           id: string
-          logs: string | null
-          migration_name: string
-          rolled_back_at: string | null
-          started_at: string
+          name: string | null
+          type: string
+          updatedAt: string | null
         }
         Insert: {
-          applied_steps_count?: number
-          checksum: string
-          finished_at?: string | null
-          id: string
-          logs?: string | null
-          migration_name: string
-          rolled_back_at?: string | null
-          started_at?: string
+          createdAt?: string | null
+          icon?: string | null
+          id?: string
+          name?: string | null
+          type: string
+          updatedAt?: string | null
         }
         Update: {
-          applied_steps_count?: number
-          checksum?: string
-          finished_at?: string | null
+          createdAt?: string | null
+          icon?: string | null
           id?: string
-          logs?: string | null
-          migration_name?: string
-          rolled_back_at?: string | null
-          started_at?: string
+          name?: string | null
+          type?: string
+          updatedAt?: string | null
         }
         Relationships: []
+      }
+      ChatRoomMember: {
+        Row: {
+          chatroomId: string
+          id: string
+          userId: string
+        }
+        Insert: {
+          chatroomId: string
+          id?: string
+          userId: string
+        }
+        Update: {
+          chatroomId?: string
+          id?: string
+          userId?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ChatRoomMember_chatroomId_fkey"
+            columns: ["chatroomId"]
+            isOneToOne: false
+            referencedRelation: "ChatRoom"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ChatRoomMember_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "User"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Friends: {
+        Row: {
+          friendId: string
+          id: string
+          request: boolean | null
+          userId: string
+        }
+        Insert: {
+          friendId: string
+          id?: string
+          request?: boolean | null
+          userId: string
+        }
+        Update: {
+          friendId?: string
+          id?: string
+          request?: boolean | null
+          userId?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Friends_friendId_fkey"
+            columns: ["friendId"]
+            isOneToOne: false
+            referencedRelation: "User"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Friends_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "User"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       Message: {
         Row: {
           content: string
-          createdAt: string
+          createdAt: string | null
           id: string
           roomId: string
-          updatedAt: string
+          updatedAt: string | null
           userId: string
         }
         Insert: {
           content: string
-          createdAt?: string
-          id: string
+          createdAt?: string | null
+          id?: string
           roomId: string
-          updatedAt: string
+          updatedAt?: string | null
           userId: string
         }
         Update: {
           content?: string
-          createdAt?: string
+          createdAt?: string | null
           id?: string
           roomId?: string
-          updatedAt?: string
+          updatedAt?: string | null
           userId?: string
         }
         Relationships: [
@@ -97,7 +160,7 @@ export type Database = {
             foreignKeyName: "Message_roomId_fkey"
             columns: ["roomId"]
             isOneToOne: false
-            referencedRelation: "Room"
+            referencedRelation: "ChatRoom"
             referencedColumns: ["id"]
           },
           {
@@ -111,21 +174,21 @@ export type Database = {
       }
       Reaction: {
         Row: {
-          createdAt: string
+          createdAt: string | null
           emoji: string
           id: string
           messageId: string
           userId: string
         }
         Insert: {
-          createdAt?: string
+          createdAt?: string | null
           emoji: string
-          id: string
+          id?: string
           messageId: string
           userId: string
         }
         Update: {
-          createdAt?: string
+          createdAt?: string | null
           emoji?: string
           id?: string
           messageId?: string
@@ -152,19 +215,19 @@ export type Database = {
         Row: {
           id: string
           messageId: string
-          readAt: string
+          readAt: string | null
           userId: string
         }
         Insert: {
-          id: string
+          id?: string
           messageId: string
-          readAt?: string
+          readAt?: string | null
           userId: string
         }
         Update: {
           id?: string
           messageId?: string
-          readAt?: string
+          readAt?: string | null
           userId?: string
         }
         Relationships: [
@@ -184,69 +247,62 @@ export type Database = {
           },
         ]
       }
-      Room: {
-        Row: {
-          createdAt: string
-          id: string
-          name: string
-          updatedAt: string
-        }
-        Insert: {
-          createdAt?: string
-          id: string
-          name: string
-          updatedAt: string
-        }
-        Update: {
-          createdAt?: string
-          id?: string
-          name?: string
-          updatedAt?: string
-        }
-        Relationships: []
-      }
       TemplateMessage: {
         Row: {
-          category: string
+          category: string | null
           content: string
           id: string
+          userId: string
         }
         Insert: {
-          category: string
+          category?: string | null
           content: string
-          id: string
+          id?: string
+          userId: string
         }
         Update: {
-          category?: string
+          category?: string | null
           content?: string
           id?: string
+          userId?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "TemplateMessage_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "User"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       User: {
         Row: {
-          avatar: string | null
-          createdAt: string
+          avatar: string
+          createdAt: string | null
           email: string
+          find_id: string
           id: string
           name: string
-          updatedAt: string
+          updatedAt: string | null
         }
         Insert: {
-          avatar?: string | null
-          createdAt?: string
+          avatar: string
+          createdAt?: string | null
           email: string
-          id: string
+          find_id: string
+          id?: string
           name: string
-          updatedAt: string
+          updatedAt?: string | null
         }
         Update: {
-          avatar?: string | null
-          createdAt?: string
+          avatar?: string
+          createdAt?: string | null
           email?: string
+          find_id?: string
           id?: string
           name?: string
-          updatedAt?: string
+          updatedAt?: string | null
         }
         Relationships: []
       }
